@@ -74,7 +74,7 @@ export class MentionListComponent implements OnInit {
     if (isInputOrTextAreaElement(nativeParentElement)) {
       // parent elements need to have postition:relative for this to work correctly?
       coords = getCaretCoordinates(nativeParentElement, nativeParentElement.selectionStart);
-      coords.top = nativeParentElement.offsetTop + coords.top + 16;
+      coords.top = nativeParentElement.offsetTop + coords.top;
       coords.left = nativeParentElement.offsetLeft + coords.left;
     } else if (iframe) {
       const context: { iframe: HTMLIFrameElement, parent: Element } = {iframe: iframe, parent: iframe.offsetParent};
@@ -92,9 +92,13 @@ export class MentionListComponent implements OnInit {
       coords.left = caretRelativeToView.left - parentRelativeToContainer.left + nativeParentElement.offsetLeft - scrollLeft;
     }
     const el: HTMLElement = this._element.nativeElement;
-    el.style.position = 'absolute';
-    el.style.left = coords.left + 'px';
-    el.style.top = coords.top + 'px';
+    setTimeout(() => {
+      const topPositionAdjustment = 12; // TODO: enable to set adjustment value when using this component
+      const elementLeftTopCoordinate = coords.top - el.firstElementChild.clientHeight - topPositionAdjustment;
+      el.style.position = 'absolute';
+      el.style.left = coords.left + 'px';
+      el.style.top = elementLeftTopCoordinate + 'px';
+    });
   }
 
   get activeItem() {
